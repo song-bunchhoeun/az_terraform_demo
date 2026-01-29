@@ -17,3 +17,8 @@ az storage account list --output table
 
 #### IV. Az CLI deletion
 az group delete --name rg-demo-terraform --yes => (delete az resource group)
+
+#### VI. Terraform Execute/Deploy Command
+terraform init => "initiation the resources" <br>
+terraform plan => "Check plan to deploy and how many plan you would to do" <br>
+terrafrom apply => "Execute process"

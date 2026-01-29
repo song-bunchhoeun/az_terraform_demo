@@ -8,7 +8,7 @@ az account show <br>
 az account list --output table <br>
 az account set --subscription "<SUBSCRIPTION_ID>"
 
-#### III.Verify the Resul
+#### III. Verify the Resul
 az group list --output table  =>(view resource groups) <br>
 az webapp list --output table =>(view webapp service) <br>
 az functionapp list --output table =>(view function service) <br>

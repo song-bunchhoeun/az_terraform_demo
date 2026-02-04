@@ -1,0 +1,30 @@
+
+name: Terraform CD
+
+on:
+  push
+    branches: ["main", "uat", "dev"]
+
+jobs:
+      - name: Terraform workspace Select
+        run: |
+          terraform workspace select -or-create ${GITHUB_REF_NAME}
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        run: terraform plan
+
+      # - name: Terraform Apply
+      #   if: |
+      #     github.event_name == 'push' &&
+      #     (github.ref == 'refs/heads/main' ||
+      #      github.ref == 'refs/heads/dev'  ||
+      #      github.ref == 'refs/heads/uat')
+      #   run: terraform apply -auto-approve
+
+      - name: Terraform Apply
+        if: github.event_name == 'push' && (github.ref_name == 'dev' || github.ref_name == 'uat' || github.ref_name == 'main')
+        run: terraform apply -auto-approve
+

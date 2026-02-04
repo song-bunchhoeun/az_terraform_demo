@@ -49,10 +49,10 @@ jobs:
           else
             echo "RG does not exist, Terraform will create it on apply"
           fi
-      - name: Terraform Format
-        id: fmt
-        run: terraform fmt -check -recursive
-        continue-on-error: true
+      # - name: Terraform Format
+      #   id: fmt
+      #   run: terraform fmt -check -recursive
+      #   continue-on-error: true
 
       - name: Terraform Plan
         id: plan

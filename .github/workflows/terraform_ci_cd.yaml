@@ -9,42 +9,38 @@ on:
 jobs:
   terraform:
     runs-on: ubuntu-latest
+    env:
+      # These allow Terraform to talk to Azure without extra 'az login' steps in every run
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      TF_PLUGIN_CACHE_DIR: ~/.terraform.d/plugin-cache
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.6.6
-
-      - name: Azure Login
-        run: |
-          az login --service-principal \
-            -u ${{ secrets.AZURE_CLIENT_ID }} \
-            -p ${{ secrets.AZURE_CLIENT_SECRET }} \
-            --tenant ${{ secrets.AZURE_TENANT_ID }}
-          az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Cache Terraform plugins
         uses: actions/cache@v3
         with:
-          path: |
-            .terraform
-            .terraform.lock.hcl
-          key: ${{ runner.os }}-terraform-${{ hashFiles('**/*.tf') }}
-          restore-keys: |
-            ${{ runner.os }}-terraform-
+          path: ~/.terraform.d/plugin-cache
+          key: ${{ runner.os }}-terraform-${{ hashFiles('**/*.tf*') }}
 
       - name: Terraform Init
         working-directory: Terraform
-        run: terraform init -get=fale
-        env:
-          IF_PLUGIN_CACHE_DIR: ~/.terraform.d/plugin-cache
+        # Changed 'fale' to 'false'
+        run: terraform init -get=false
 
       - name: Terraform Workspace Select
-        run: terraform workspace select -or-create $GITHUB_REF_NAME
+        working-directory: Terraform
+        # Ensure workspace matches your branch (dev, uat, main)
+        run: terraform workspace select -or-create ${{ github.ref_name }}
 
       - name: Terraform Validate
         working-directory: Terraform
@@ -56,5 +52,7 @@ jobs:
 
       - name: Terraform Apply
         working-directory: Terraform
-        if: github.event_name == 'push' && (github.ref_name == 'dev' || github.ref_name == 'uat' || github.ref_name == 'main')
-        run: terraform apply -auto-approve -out=main.tfplan
+        # Only apply on push to specific branches
+        if: github.event_name == 'push' && contains(fromJson('["main", "dev", "uat"]'), github.ref_name)
+        # Removed -auto-approve (not used with plan files)
+        run: terraform apply main.tfplan

@@ -99,29 +99,29 @@ resource "azurerm_api_management_api" "api_mgmt_apis" {
 
 ## Compute App Services
 #App Service Plan (B1 Basic tier portal instance)
-resource "azurerm_service_plan" "portal_plan" {
-  name                = "plan-ekyc-nonprod-sea-001"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  os_type             = "Windows"
-  sku_name            = "B1"
-}
+# resource "azurerm_service_plan" "portal_plan" {
+#   name                = "plan-ekyc-nonprod-sea-001"
+#   resource_group_name = azurerm_resource_group.rg.name
+#   location            = azurerm_resource_group.rg.location
+#   os_type             = "Windows"
+#   sku_name            = "B1"
+# }
 
-resource "azurerm_service_plan" "api_plan" {
-  name                = "plan-ekyc-nonprod-sea-002"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  os_type             = "Linux"
-  sku_name            = "B1"
-}
+# resource "azurerm_service_plan" "api_plan" {
+#   name                = "plan-ekyc-nonprod-sea-002"
+#   resource_group_name = azurerm_resource_group.rg.name
+#   location            = azurerm_resource_group.rg.location
+#   os_type             = "Linux"
+#   sku_name            = "B1"
+# }
 
-resource "azurerm_service_plan" "function_plan" {
-  name                = "plan-ekyc-nonprod-sea-003"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  os_type             = "Windows"
-  sku_name            = "FC1"
-}
+# resource "azurerm_service_plan" "function_plan" {
+#   name                = "plan-ekyc-nonprod-sea-003"
+#   resource_group_name = azurerm_resource_group.rg.name
+#   location            = azurerm_resource_group.rg.location
+#   os_type             = "Windows"
+#   sku_name            = "FC1"
+# }
 
 # App Service (Portal)
 # resource "azurerm_windows_web_app" "portal_dev" {
@@ -242,22 +242,22 @@ resource "azurerm_service_plan" "function_plan" {
 
 
 # Storage Account (Dev Function App)
-# resource "azurerm_storage_account" "storage_account_dev" {
-#   name                     = "stekycnonproddev${random_string.sa_suffix.result}"
-#   resource_group_name      = azurerm_resource_group.rg.name
-#   location                 = azurerm_resource_group.rg.location
-#   account_tier             = "Standard"
-#   account_replication_type = "LRS"
-# }
+resource "azurerm_storage_account" "storage_account_dev" {
+  name                     = "stekycnonproddev${random_string.sa_suffix.result}"
+  resource_group_name      = azurerm_resource_group.rg.name
+  location                 = azurerm_resource_group.rg.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
 
-# # storage accout for Function App UAT
-# resource "azurerm_storage_account" "storage_account_uat" {
-#   name                     = "stekycnonproduat${random_string.sa_suffix.result}"
-#   resource_group_name      = azurerm_resource_group.rg.name
-#   location                 = azurerm_resource_group.rg.location
-#   account_tier             = "Standard"
-#   account_replication_type = "LRS"
-# }
+# storage accout for Function App UAT
+resource "azurerm_storage_account" "storage_account_uat" {
+  name                     = "stekycnonproduat${random_string.sa_suffix.result}"
+  resource_group_name      = azurerm_resource_group.rg.name
+  location                 = azurerm_resource_group.rg.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
 
 ## Data & Cache
 # SQL Server (DEV)

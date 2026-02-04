@@ -39,7 +39,9 @@ jobs:
 
       - name: Terraform Init
         working-directory: Terraform
-        run: terraform init
+        run: terraform init -get=fale
+        env:
+          IF_PLUGIN_CACHE_DIR: ~/.terraform.d/plugin-cache
 
       - name: Terraform Workspace Select
         run: terraform workspace select -or-create $GITHUB_REF_NAME
@@ -50,9 +52,9 @@ jobs:
 
       - name: Terraform Plan
         working-directory: Terraform
-        run: terraform plan
+        run: terraform plan -out=main.tfplan
 
       - name: Terraform Apply
         working-directory: Terraform
         if: github.event_name == 'push' && (github.ref_name == 'dev' || github.ref_name == 'uat' || github.ref_name == 'main')
-        run: terraform apply -auto-approve
+        run: terraform apply -auto-approve -out=main.tfplan

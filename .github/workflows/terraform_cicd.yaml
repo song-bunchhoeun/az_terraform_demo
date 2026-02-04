@@ -10,7 +10,6 @@ jobs:
   terraform:
     runs-on: ubuntu-latest
     env:
-      # These allow Terraform to talk to Azure without extra 'az login' steps in every run
       ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
       ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
@@ -34,12 +33,10 @@ jobs:
 
       - name: Terraform Init
         working-directory: Terraform
-        # Changed 'fale' to 'false'
-        run: terraform init -get=false
+        run: terraform init
 
       - name: Terraform Workspace Select
         working-directory: Terraform
-        # Ensure workspace matches your branch (dev, uat, main)
         run: terraform workspace select -or-create ${{ github.ref_name }}
 
       - name: Terraform Validate
@@ -48,11 +45,9 @@ jobs:
 
       - name: Terraform Plan
         working-directory: Terraform
-        run: terraform plan -out=main.tfplan
+        run: terraform plan
 
       - name: Terraform Apply
         working-directory: Terraform
-        # Only apply on push to specific branches
         if: github.event_name == 'push' && contains(fromJson('["main", "dev", "uat"]'), github.ref_name)
-        # Removed -auto-approve (not used with plan files)
-        run: terraform apply main.tfplan
+        run: terraform apply -auto-approve

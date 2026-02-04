@@ -27,13 +27,13 @@ output "subnet_ids" {
 ############################
 # App Service Plans
 ############################
-output "service_plan_ids" {
-  value = {
-    portal_plan   = azurerm_service_plan.portal_plan.id
-    api_plan      = azurerm_service_plan.api_plan.id
-    function_plan = azurerm_service_plan.function_plan.id
-  }
-}
+# output "service_plan_ids" {
+#   value = {
+#     portal_plan   = azurerm_service_plan.portal_plan.id
+#     api_plan      = azurerm_service_plan.api_plan.id
+#     function_plan = azurerm_service_plan.function_plan.id
+#   }
+# }
 
 ############################
 # Web Apps
@@ -65,12 +65,12 @@ output "service_plan_ids" {
 # ############################
 # # Storage Accounts
 # ############################
-# output "storage_accounts" {
-#   value = {
-#     dev = azurerm_storage_account.storage_account_dev.name
-#     uat = azurerm_storage_account.storage_account_uat.name
-#   }
-# }
+output "storage_accounts" {
+  value = {
+    dev = azurerm_storage_account.storage_account_dev.name
+    uat = azurerm_storage_account.storage_account_uat.name
+  }
+}
 
 ############################
 # SQL Servers & Databases

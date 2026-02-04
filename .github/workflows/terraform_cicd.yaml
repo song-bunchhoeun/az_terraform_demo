@@ -1,4 +1,4 @@
-name: Terraform CI CD
+name: Terraform CI/CD
 
 on:
   push:
@@ -9,45 +9,39 @@ on:
 jobs:
   terraform:
     runs-on: ubuntu-latest
-    env:
-      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-      TF_PLUGIN_CACHE_DIR: ~/.terraform.d/plugin-cache
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+        uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.6.6
 
-      - name: Cache Terraform plugins
-        uses: actions/cache@v3
-        with:
-          path: ~/.terraform.d/plugin-cache
-          key: ${{ runner.os }}-terraform-${{ hashFiles('**/*.tf*') }}
+      - name: Azure Login
+        run: |
+          az login --service-principal \
+            -u ${{ secrets.AZURE_CLIENT_ID }} \
+            -p ${{ secrets.AZURE_CLIENT_SECRET }} \
+            --tenant ${{ secrets.AZURE_TENANT_ID }}
+          az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
 
       - name: Terraform Init
-        working-directory: Terraform
         run: terraform init
 
       - name: Terraform Workspace Select
-        working-directory: Terraform
-        run: terraform workspace select -or-create ${{ github.ref_name }}
+        run: terraform workspace select -or-create $GITHUB_REF_NAME
 
       - name: Terraform Validate
-        working-directory: Terraform
         run: terraform validate
 
       - name: Terraform Plan
-        working-directory: Terraform
         run: terraform plan
 
       - name: Terraform Apply
-        working-directory: Terraform
-        if: github.event_name == 'push' && contains(fromJson('["main", "dev", "uat"]'), github.ref_name)
+        if: github.event_name == 'push' && (github.ref_name == 'dev' || github.ref_name == 'uat' || github.ref_name == 'main' || github.ref_name == 'terraform_azure')
         run: terraform apply -auto-approve

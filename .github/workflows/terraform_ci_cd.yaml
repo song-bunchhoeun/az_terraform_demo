@@ -36,24 +36,19 @@ jobs:
         run: |
           terraform init
 
-      - name: Terraform Workspace Select
+      - name: Import RG if exists, otherwise let Terraform create it
         run: |
-          terraform workspace select -or-create "${GITHUB_REF_NAME}"
-              
-      - name: Import existing RG if not in state
-        if: |
-          github.ref_name == 'dev' ||
-          github.ref_name == 'uat' ||
-          github.ref_name == 'main' ||
-          github.ref_name == 'terraform_azure'
-        run: |
-          if ! terraform state list | grep -q azurerm_resource_group.rg; then
-            terraform import azurerm_resource_group.rg \
-              /subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/rg-test-1
+          if az group show --name rg-test-1 >/dev/null 2>&1; then
+            echo "RG already exists in Azure, importing into Terraform state..."
+            if ! terraform state list | grep -q azurerm_resource_group.rg; then
+              terraform import azurerm_resource_group.rg \
+                /subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/rg-test-1
+            else
+              echo "Resource already in Terraform state, skipping import"
+            fi
           else
-            echo "Resource group already in state, skipping import"
+            echo "RG does not exist, Terraform will create it on apply"
           fi
-
       - name: Terraform Format
         id: fmt
         run: terraform fmt -check -recursive

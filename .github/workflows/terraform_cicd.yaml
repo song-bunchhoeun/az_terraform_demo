@@ -31,17 +31,21 @@ jobs:
       #   run: terraform fmt -check -recursive
 
       - name: Terraform Init
+        working-dorectory: Terraform
         run: terraform init
 
       - name: Terraform Workspace Select
         run: terraform workspace select -or-create $GITHUB_REF_NAME
 
       - name: Terraform Validate
+        working-dorectory: Terraform
         run: terraform validate
 
       - name: Terraform Plan
+        working-dorectory: Terraform
         run: terraform plan
 
       - name: Terraform Apply
         if: github.event_name == 'push' && (github.ref_name == 'dev' || github.ref_name == 'uat' || github.ref_name == 'main' || github.ref_name == 'terraform_azure')
+        working-dorectory: Terraform
         run: terraform apply -auto-approve

@@ -38,15 +38,18 @@ jobs:
             ${{ runner.os }}-terraform-
 
       - name: Terraform Init
+        working-directory: Terraform
         run: terraform init
 
       - name: Terraform Workspace Select
         run: terraform workspace select -or-create $GITHUB_REF_NAME
 
       - name: Terraform Validate
+        working-directory: Terraform
         run: terraform validate
 
       - name: Terraform Plan
+        working-directory: Terraform
         run: terraform plan
 
       - name: Terraform Apply

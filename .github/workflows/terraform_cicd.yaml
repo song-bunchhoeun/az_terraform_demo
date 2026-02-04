@@ -29,10 +29,17 @@ jobs:
 
       # - name: Terraform Format Check
       #   run: terraform fmt -check -recursive
+      - name: Cache Terraform providers
+        uses: actions/cache@v3
+        with:
+          path: ~/.terraform.d/plugin-cache
+          key: ${{ runner.os }}-terraform-${{ hashFiles('**/*.tf') }}
 
       - name: Terraform Init
         working-directory: Terraform
-        run: terraform init
+        run: terraform init -input=false
+          env:
+            TF_PLUGIN_CACHE_DIR: ~/.terraform.d/plugin-cache
 
       - name: Terraform Workspace Select
         run: terraform workspace select -or-create $GITHUB_REF_NAME

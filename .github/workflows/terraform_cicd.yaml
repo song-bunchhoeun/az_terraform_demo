@@ -31,7 +31,6 @@ jobs:
       #   run: terraform fmt -check -recursive
 
       - name: Terraform Init
-        working-dorectory: Terraform
         run: terraform init
 
       - name: Terraform Workspace Select

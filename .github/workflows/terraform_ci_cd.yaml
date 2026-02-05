@@ -43,7 +43,7 @@ jobs:
 
       - name: Terraform Validate
         working-directory: ${{ env.WORKING_DIR }}
-        run: terraform validate -var-file="terraform-backend/terraform.hcl" -out=tfplan
+        run: terraform validate 
 
       - name: Terraform Plan
         id: plan

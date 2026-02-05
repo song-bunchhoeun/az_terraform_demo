@@ -7,8 +7,11 @@ on:
     branches: [ main, dev, uat, terraform_azure ]
 
 jobs:
-  terraform:
+  terraform-build-deploy:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./Terraform   
 
     steps:
       - name: Checkout repository
@@ -27,8 +30,6 @@ jobs:
             --tenant ${{ secrets.AZURE_TENANT_ID }}
           az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      # - name: Terraform Format Check
-      #   run: terraform fmt -check -recursive
       - name: Cache Terraform providers
         uses: actions/cache@v3
         with:
@@ -36,7 +37,6 @@ jobs:
           key: ${{ runner.os }}-terraform-${{ hashFiles('**/*.tf') }}
 
       - name: Terraform Init
-        working-directory: Terraform
         run: terraform init -input=false
         env:
           TF_PLUGIN_CACHE_DIR: ~/.terraform.d/plugin-cache
@@ -45,14 +45,11 @@ jobs:
         run: terraform workspace select -or-create $GITHUB_REF_NAME
 
       - name: Terraform Validate
-        working-directory: Terraform
         run: terraform validate
 
       - name: Terraform Plan
-        working-directory: Terraform
         run: terraform plan
 
       - name: Terraform Apply
         if: github.event_name == 'push' && (github.ref_name == 'dev' || github.ref_name == 'uat' || github.ref_name == 'main' || github.ref_name == 'terraform_azure')
-        working-directory: Terraform
         run: terraform apply -auto-approve

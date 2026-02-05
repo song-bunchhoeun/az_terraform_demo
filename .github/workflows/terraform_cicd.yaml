@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./terraform-bootstrap   
+        working-directory: ./terraform-bootstrap
 
     steps:
       - name: Checkout repository
@@ -31,7 +31,7 @@ jobs:
           az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Terraform Init
-        run: terraform init 
+        run: terraform init
 
       - name: Terraform Validate
         run: terraform validate
@@ -43,17 +43,21 @@ jobs:
         if: github.event_name == 'push' && (github.ref_name == 'dev' || github.ref_name == 'uat' || github.ref_name == 'main' || github.ref_name == 'terraform_azure')
         run: terraform apply -auto-approve
 
-deploy:
-    needs: bootstrap
+  deploy:
+    needs: terraform-build
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./Terraform
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: hashicorp/setup-terraform@v2
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.6.6
 
       - name: Azure Login
         run: |

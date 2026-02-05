@@ -39,14 +39,11 @@ jobs:
 
       - name: Terraform Init
         working-directory: ${{ env.WORKING_DIR }} 
-        id: init
-        run: |
-          terraform init \
-            -backend-config="key=${{ github.ref_name }}.tfstate"
+        run: terraform init -backend-config="terraform-backend/terraform.hcl"
 
       - name: Terraform Validate
-        id: validate
-        run: terraform validate 
+        working-directory: ${{ env.WORKING_DIR }}
+        run: terraform validate -var-file="terraform-backend/terraform.hcl" -out=tfplan
 
       - name: Terraform Plan
         id: plan

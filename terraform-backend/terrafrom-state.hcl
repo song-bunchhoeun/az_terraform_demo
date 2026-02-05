@@ -1,4 +1,4 @@
-# resource_group_name  = "tfstate-rg"
-# storage_account_name = "tfstateuat8a9b"
-# container_name       = "tfstateuat6d9a"
-# key                  = "terraform_azure.terraform.tfstate"
+resource_group_name  = "tfstate-rg"
+storage_account_name = "tfstateuat8a9b"
+container_name       = "tfstateuat6d9a"
+key                  = "terraform_azure.terraform.tfstate"

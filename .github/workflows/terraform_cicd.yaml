@@ -25,12 +25,22 @@ jobs:
   validate:
     name: 'Terraform Validate'
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: terraform
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+
+      - name: Debug Folder Structure
+        run: |
+          echo "Current Path: $(pwd)"
+          ls -R
+
+      - name: Azure Login
+        run: |
+          az login --service-principal \
+            -u "${{ secrets.ARM_CLIENT_ID }}" \
+            -p "${{ secrets.ARM_CLIENT_SECRET }}" \
+            --tenant "${{ secrets.ARM_TENANT_ID }}"
+          az account set --subscription "${{ secrets.ARM_SUBSCRIPTION_ID }}"
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -47,7 +57,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./Terraform
+        working-directory: ./terraform
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4

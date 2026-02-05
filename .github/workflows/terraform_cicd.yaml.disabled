@@ -9,9 +9,6 @@ on:
 
 jobs:
 
-  # -------------------------
-  # Job 1: Bootstrap Backend
-  # -------------------------
   terraform-bootstrap:
     runs-on: ubuntu-latest
     defaults:

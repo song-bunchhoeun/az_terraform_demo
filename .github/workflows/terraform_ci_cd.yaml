@@ -36,19 +36,25 @@ jobs:
         run: |
           terraform init
 
-      - name: Import RG if exists, otherwise let Terraform create it
+      - name: Import existing resources if needed
         run: |
-          if az group show --name rg-test-1 >/dev/null 2>&1; then
-            echo "RG already exists in Azure, importing into Terraform state..."
+          # Import RG if exists
+          if az group show --name $RG_NAME >/dev/null 2>&1; then
+            echo "RG exists"
             if ! terraform state list | grep -q azurerm_resource_group.rg; then
-              terraform import azurerm_resource_group.rg \
-                /subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/rg-test-1
-            else
-              echo "Resource already in Terraform state, skipping import"
+              terraform import azurerm_resource_group.rg /subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/$RG_NAME
             fi
-          else
-            echo "RG does not exist, Terraform will create it on apply"
           fi
+
+          # Import VNet if exists
+          if az network vnet show --resource-group $RG_NAME --name vnet-test-1 >/dev/null 2>&1; then
+            echo "VNet exists"
+            if ! terraform state list | grep -q azurerm_virtual_network.vnet; then
+              terraform import azurerm_virtual_network.vnet /subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/$RG_NAME/providers/Microsoft.Network/virtualNetworks/vnet-test-1
+            fi
+          fi
+        env:
+          RG_NAME: rg-test-1
       # - name: Terraform Format
       #   id: fmt
       #   run: terraform fmt -check -recursive

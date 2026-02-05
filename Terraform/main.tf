@@ -1,7 +1,21 @@
 # Resource Group
 resource "azurerm_resource_group" "rg" {
-  name     = "rg-terraform-state"
+  name     = "rg-test-1"
   location = "Southeast Asia"
+}
+
+resource "azurerm_storage_account" "state_sa" {
+  name                     = "tfstateuniqueaccountname"
+  resource_group_name      = azurerm_resource_group.state_rg.name
+  location                 = azurerm_resource_group.state_rg.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
+
+resource "azurerm_storage_container" "state_container" {
+  name                  = "tfstate"
+  storage_account_id    = azurerm_storage_account.state_sa.id
+  container_access_type = "private"
 }
 
 # Virtual Network

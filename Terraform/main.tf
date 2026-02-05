@@ -1,8 +1,8 @@
 # Resource Group
-resource "azurerm_resource_group" "rg" {
-  name     = "rg-test-1"
-  location = "Southeast Asia"
-}
+# resource "azurerm_resource_group" "rg" {
+#   name     = "rg-test-1"
+#   location = "Southeast Asia"
+# }
 
 # Virtual Network
 resource "azurerm_virtual_network" "vnet" {

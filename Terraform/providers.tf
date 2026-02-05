@@ -6,7 +6,14 @@ terraform {
       version = "4.58.0" 
     }
   }
+  # backend "azurerm" {
+  #   resource_group_name  = "rg-test-1"
+  #   storage_account_name = "tfstateuniqueaccountname"
+  #   container_name       = "tfstate"
+  #   key                  = "prod.terraform.tfstate"
+  # }
 }
+
 
 provider "azurerm" {
   features {}
@@ -18,28 +25,4 @@ resource "random_string" "sa_suffix" {
   length  = 6
   upper   = false
   special = false
-}
-
-resource "azurerm_resource_group" "rg" {
-  name     = "rg-test-1"
-  location = "Southeast Asia"
-}
-
-resource "azurerm_storage_account" "tfstate" {
-  name                     = "tfstate${random_string.resource_code.result}"
-  resource_group_name      = azurerm_resource_group.rg.name
-  location                 = azurerm_resource_group.rg
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-  allow_nested_items_to_be_public = false
-
-  tags = {
-    environment = "staging"
-  }
-}
-
-resource "azurerm_storage_container" "tfstate" {
-  name                  = "tfstate"
-  storage_account_id    = azurerm_storage_account.tfstate.id
-  container_access_type = "private"
 }

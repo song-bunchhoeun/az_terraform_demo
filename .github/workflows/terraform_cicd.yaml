@@ -12,7 +12,7 @@ on:
       - main
       - uat
       - dev
-      -terraform_azure
+      - terraform_azure
 
 # Set environment variables for Azure Authentication
 env:

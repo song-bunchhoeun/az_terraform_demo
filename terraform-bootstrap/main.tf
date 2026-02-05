@@ -3,7 +3,7 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "rg" {
-  name     = "rg-test-2"
+  name     = "rg-test-1"
   location = "Southeast Asia"
 }
 

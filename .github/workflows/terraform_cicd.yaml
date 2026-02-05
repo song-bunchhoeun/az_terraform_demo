@@ -18,21 +18,9 @@ jobs:
       run:
         working-directory: ./terraform-bootstrap
 
-    env:
-      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.6.6
-
+      - uses: actions/checkout@v3
+      - uses: hashicorp/setup-terraform@v2
       - name: Azure Login
         run: |
           az login --service-principal \
@@ -41,19 +29,16 @@ jobs:
             --tenant ${{ secrets.AZURE_TENANT_ID }}
           az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Terraform Init
-        run: terraform init
-
-      - name: Terraform Plan & Apply Backend
+      - name: Terraform Init & Apply Bootstrap
         run: |
-          terraform plan -out tfplan
-          terraform apply -auto-approve tfplan
+          terraform init
+          terraform apply -auto-approve
 
   # -------------------------
   # Job 2: Deploy Main Infra
   # -------------------------
   deploy:
-    needs: terraform-bootstrap
+    needs: terraform
     runs-on: ubuntu-latest
     defaults:
       run:

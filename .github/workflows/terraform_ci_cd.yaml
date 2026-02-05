@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./terraform
+        working-directory: ./Terraform
 
     env:
       ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
@@ -43,7 +43,7 @@ jobs:
         run: |
           terraform init \
             -backend-config="key=${{ github.ref_name }}.tfstate"
-            
+
       - name: Terraform Validate
         id: validate
         run: terraform validate 

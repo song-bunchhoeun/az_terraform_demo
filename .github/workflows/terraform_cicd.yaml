@@ -37,10 +37,10 @@ jobs:
       - name: Azure Login
         run: |
           az login --service-principal \
-            -u "${{ secrets.ARM_CLIENT_ID }}" \
-            -p "${{ secrets.ARM_CLIENT_SECRET }}" \
-            --tenant "${{ secrets.ARM_TENANT_ID }}"
-          az account set --subscription "${{ secrets.ARM_SUBSCRIPTION_ID }}"
+            -u "${{ secrets.AZURE_CLIENT_ID }}" \
+            -p "${{ secrets.AZURE_CLIENT_SECRET }}" \
+            --tenant "${{ secrets.AZURE_TENANT_ID }}"
+          az account set --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3

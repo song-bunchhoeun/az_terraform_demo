@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./Terraform
+        working-directory: ./terraform
 
     env:
       ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
@@ -36,39 +36,6 @@ jobs:
             -p ${{ secrets.AZURE_CLIENT_SECRET }} \
             --tenant ${{ secrets.AZURE_TENANT_ID }}
           az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      # - name: Create TF State Infrastructure if not exists
-      #   run: |
-      #     RG_NAME="tfstate-rg"
-      #     STORAGE_ACCOUNT_NAME="tfstateuat8a9b" # Use a fixed, unique name here
-      #     LOCATION="Southeast Asia"
-      #     CONTAINER_NAME="tfstateuat6d9a"
-
-      #     # 1. Check if the Resource Group already exists
-      #     RG_EXISTS=$(az group exists --name $RG_NAME)
-
-      #     if [ "$RG_EXISTS" == "true" ]; then
-      #       echo "Infrastructure already exists. Skipping creation."
-      #     else
-      #       echo "Infrastructure not found. Starting creation..."
-
-      #       # Create Resource Group
-      #       az group create --name "$RG_NAME" --location "$LOCATION"
-
-      #       # Create Storage Account
-      #       az storage account create \
-      #         --name "$STORAGE_ACCOUNT_NAME" \
-      #         --resource-group "$RG_NAME" \
-      #         --location "$LOCATION" \
-      #         --sku Standard_LRS
-
-      #       # Create Blob Container
-      #       az storage container create \
-      #         --name "$CONTAINER_NAME" \
-      #         --account-name "$STORAGE_ACCOUNT_NAME"
-            
-      #       echo "Infrastructure successfully created."
-      #     fi
 
       - name: Terraform Init
         id: init

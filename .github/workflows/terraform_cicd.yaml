@@ -38,7 +38,7 @@ jobs:
   # Job 2: Deploy Main Infra
   # -------------------------
   deploy:
-    needs: terraform
+    needs: terraform-bootstrap
     runs-on: ubuntu-latest
     defaults:
       run:

@@ -99,7 +99,6 @@ jobs:
 
     runs-on: ubuntu-latest
     environment: production # This enables manual approval in GitHub UI
-    defaults:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4

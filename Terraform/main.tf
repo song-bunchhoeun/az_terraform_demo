@@ -1,6 +1,6 @@
 # Resource Group
 resource "azurerm_resource_group" "rg" {
-  name     = "rg-test-1"
+  name     = "rg-terraform-state"
   location = "Southeast Asia"
 }
 

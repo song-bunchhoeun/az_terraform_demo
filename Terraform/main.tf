@@ -1,8 +1,8 @@
 # Resource Group
-resource "azurerm_resource_group" "rg" {
-  name     = "tfstate-rg"
-  location = "Southeast Asia"
-}
+# resource "azurerm_resource_group" "rg" {
+#   name     = "tfstate-rg"
+#   location = "Southeast Asia"
+# }
 
 # Virtual Network
 resource "azurerm_virtual_network" "vnet" {

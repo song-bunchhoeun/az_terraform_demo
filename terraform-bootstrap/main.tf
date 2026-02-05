@@ -1,6 +1,8 @@
-# provider "azurerm" {
-#   features {}
-# }
+provider "azurerm" {
+  features {}
+    subscription_id = "b07e332b-f356-47ef-822e-92ff45891cc5"
+    tenant_id = "7238cf22-2f07-4cf0-a57d-85fc41978373"
+}
 
 resource "azurerm_resource_group" "rg" {
   name     = "rg-test-1"

@@ -7,13 +7,12 @@ terraform {
     }
   }
   backend "azurerm" {
-    resource_group_name  = "rg-tfstate"
-    storage_account_name = "tfstateuat9a"
-    container_name       = "tfstateuat8as4"
-    key                  = "prod.terraform.tfstate"
+    resource_group_name  = "tfstate-rg"
+    storage_account_name = "tfstateuat8a9b"
+    container_name       = "tfstateuat6d9a"
+    key                  = "terraform_azure.terraform.tfstate"
   }
 }
-
 
 provider "azurerm" {
   features {

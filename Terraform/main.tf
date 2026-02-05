@@ -1,29 +1,15 @@
-#Resource Group
+# 1. Resource Group
 resource "azurerm_resource_group" "rg" {
-  name     = "rg-test-1"
-  location = "Southeast Asia"
+  name     = "${var.prefix}-rg" 
+  location = var.location
 }
 
-# resource "azurerm_storage_account" "state_sa" {
-#   name                     = "tfstateuat9a"
-#   resource_group_name      = azurerm_resource_group.rg.name
-#   location                 = azurerm_resource_group.rg.location
-#   account_tier             = "Standard"
-#   account_replication_type = "LRS"
-# }
-
-# resource "azurerm_storage_container" "state_container" {
-#   name                  = "tfstateuat8as4"
-#   storage_account_id    = azurerm_storage_account.state_sa.id
-#   container_access_type = "private"
-# }
-
-# Virtual Network
+# 2. Virtual Network
 resource "azurerm_virtual_network" "vnet" {
-  name                = "vnet-test-1"
-  address_space       = ["10.0.0.0/16"]
-    location            = azurerm_resource_group.rg.location   
-    resource_group_name = azurerm_resource_group.rg.name
+  name                = "${var.prefix}-vnet"
+  address_space       = var.vnet_address_space 
+  location            = azurerm_resource_group.rg.location   
+  resource_group_name = azurerm_resource_group.rg.name
 }
 
 # # Subnet1

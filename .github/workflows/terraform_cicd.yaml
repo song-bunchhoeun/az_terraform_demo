@@ -55,12 +55,22 @@ jobs:
     name: 'Terraform Plan'
     needs: validate
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./terraform
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+
+      - name: Debug Folder Structure
+        run: |
+          echo "Current Path: $(pwd)"
+          ls -R
+
+      - name: Azure Login
+        run: |
+          az login --service-principal \
+            -u "${{ secrets.AZURE_CLIENT_ID }}" \
+            -p "${{ secrets.AZURE_CLIENT_SECRET }}" \
+            --tenant "${{ secrets.AZURE_TENANT_ID }}"
+          az account set --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -90,11 +100,22 @@ jobs:
     runs-on: ubuntu-latest
     environment: production # This enables manual approval in GitHub UI
     defaults:
-      run:
-        working-directory: ./terraform
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+
+      - name: Debug Folder Structure
+        run: |
+          echo "Current Path: $(pwd)"
+          ls -R
+
+      - name: Azure Login
+        run: |
+          az login --service-principal \
+            -u "${{ secrets.AZURE_CLIENT_ID }}" \
+            -p "${{ secrets.AZURE_CLIENT_SECRET }}" \
+            --tenant "${{ secrets.AZURE_TENANT_ID }}"
+          az account set --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3

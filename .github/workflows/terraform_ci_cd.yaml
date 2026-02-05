@@ -42,14 +42,13 @@ jobs:
         run: |
           terraform init
 
-      - name: Terraform Plan
-        id: plan
-        run: terraform plan -out tfplan
-        continue-on-error: false
-
       - name: Terraform Validate
         id: validate
-        run: terraform validate -no-color
+        run: terraform validate 
+
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan
 
       - name: Terraform Apply
         if: github.event_name == 'push' && (github.ref_name == 'dev' || github.ref_name == 'uat' || github.ref_name == 'main' || github.ref_name == 'terraform_azure')

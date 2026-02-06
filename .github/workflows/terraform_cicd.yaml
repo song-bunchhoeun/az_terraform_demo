@@ -43,6 +43,5 @@ jobs:
         run: terraform plan -input=false -var-file="variables.tfvars" -out=tfplan -lock=false
 
       - name: Terraform Apply
-        # Only apply on push to these specific branches
         if: github.event_name == 'push'
         run: terraform apply -input=false "tfplan"

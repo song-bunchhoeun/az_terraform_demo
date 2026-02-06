@@ -16,7 +16,7 @@ output "subnet_ids" {
   value = {
     subnet1 = azurerm_subnet.subnet1.id
     subnet2 = azurerm_subnet.subnet2.id
-    subnet3 = azurerm_subnet.subnet3.id
+    # subnet3 = azurerm_subnet.subnet3.id
   }
 }
 

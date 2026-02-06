@@ -8,7 +8,7 @@ resource "azurerm_resource_group" "rg" {
 
 # Virtual Network
 resource "azurerm_virtual_network" "vnet" {
-  name                = "${var.prefix}vnet-nonprod-sea-001"
+  name                = "${var.prefix}-vnet-nonprod-sea-001"
   address_space       = ["10.0.0.0/16"]
     location            = azurerm_resource_group.rg.location   
     resource_group_name = azurerm_resource_group.rg.name
@@ -41,34 +41,34 @@ resource "azurerm_subnet" "subnet3" {
 ## Network Security Groups
 # Front Door (Standard tier)
 resource "azurerm_network_security_group" "nsg_frontdoor" {
-  name                = "${var.prefix}afd-nonprod-global-001"
+  name                = "${var.prefix}-afd-nonprod-global-001"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 }
 
 # WAF Policy 
 resource "azurerm_network_security_group" "nsg_wafpolicy" {
-  name                = "${var.prefix}waf-nonprod-global-001"
+  name                = "${var.prefix}-waf-nonprod-global-001"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 }
 
 # Front Door Origin Groups
 resource "azurerm_network_security_group" "nsg_frontdoor_origin" {
-  name                = "${var.prefix}fdog-nonprod-sea-001"
+  name                = "${var.prefix}-fdog-nonprod-sea-001"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 }
 
 # Routing (DEV)
 resource "azurerm_network_security_group" "nsg_routing_dev" {
-  name                = "${var.prefix}rt-nonprod-dev-sea-001"
+  name                = "${var.prefix}-rt-nonprod-dev-sea-001"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 }
 # Routing (UAT)
 resource "azurerm_network_security_group" "nsg_routing_uat" {
-  name                = "${var.prefix}rt-nonprod-uat-sea-001"
+  name                = "${var.prefix}-rt-nonprod-uat-sea-001"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 }

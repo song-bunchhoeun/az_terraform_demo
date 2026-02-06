@@ -35,12 +35,12 @@ variable "subnets" {
 }
 
 variable "prefix" {
-  description = "A prefix for all resource names (e.g., ekyc-nonprod)"
+  description = "A prefix for all resource names"
   type        = string
 }
 
 variable "location" {
-  description = "The Azure region"
+  description = "The Azure region for deployment"
   type        = string
 }
 
@@ -50,6 +50,7 @@ variable "resource_group_name" {
 }
 
 variable "tags" {
-  type    = map(string)
-  default = {}
+  description = "A mapping of tags to assign to the resource"
+  type        = map(string)
+  default     = {}
 }

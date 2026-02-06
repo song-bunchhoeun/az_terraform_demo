@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./Terraform
+        working-directory: Terraform
 
     env:
       ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
@@ -39,14 +39,14 @@ jobs:
 
       - name: Terraform Init
         working-directory: ${{ env.WORKING_DIR }} 
-        run: terraform init -backend-config="./Terraform-backend/terraform-state.hcl"
+        run: terraform init -backend-config="Terraform-backend/terraform-state.hcl"
 
       - name: Terraform Validate
         working-directory: ${{ env.WORKING_DIR }}
         run: terraform validate 
 
       - name: Terraform Plan
-        run: terraform plan -input=false -var-file="./Terraform/variables.tfvars"
+        run: terraform plan -input=false -var-file="Terraform/variables.tfvars"
 
       - name: Terraform Apply
         if: github.event_name == 'push' && (github.ref_name == 'dev' || github.ref_name == 'uat' || github.ref_name == 'main' || github.ref_name == 'terraform_azure')

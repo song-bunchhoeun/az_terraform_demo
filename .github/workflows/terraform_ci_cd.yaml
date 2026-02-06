@@ -39,7 +39,7 @@ jobs:
 
       - name: Terraform Init
         working-directory: ${{ env.WORKING_DIR }} 
-        run: terraform init -backend-config="Terraform-backend/terraform-state.hcl"
+        run: terraform init -upgrade -backend-config="Terraform-backend/terraform-state.hcl"
 
       - name: Terraform Validate
         working-directory: ${{ env.WORKING_DIR }}

@@ -1,0 +1,2 @@
+prefix   = "ekyc"
+location = "southeastasia"

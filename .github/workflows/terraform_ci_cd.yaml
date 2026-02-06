@@ -1,21 +1,24 @@
-name: Terraform CI CD
+name: Terraform CI/CD
 
 on:
+  workflow_dispatch:
   push:
     branches: [ main, dev, uat ]
   pull_request:
     branches: [ main, dev, uat ]
 
 jobs:
-  terraform:
+  terraform-build-deploy:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./Terraform
+
     env:
-      # These allow Terraform to talk to Azure without extra 'az login' steps in every run
       ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
       ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-      TF_PLUGIN_CACHE_DIR: ~/.terraform.d/plugin-cache
 
     steps:
       - name: Checkout repository
@@ -26,33 +29,19 @@ jobs:
         with:
           terraform_version: 1.6.6
 
-      - name: Cache Terraform plugins
-        uses: actions/cache@v3
-        with:
-          path: ~/.terraform.d/plugin-cache
-          key: ${{ runner.os }}-terraform-${{ hashFiles('**/*.tf*') }}
-
       - name: Terraform Init
-        working-directory: Terraform
-        # Changed 'fale' to 'false'
-        run: terraform init -get=false
-
-      - name: Terraform Workspace Select
-        working-directory: Terraform
-        # Ensure workspace matches your branch (dev, uat, main)
-        run: terraform workspace select -or-create ${{ github.ref_name }}
+        run: |
+          terraform init -reconfigure \
+            -backend-config="../backend-config/uat.hcl"
 
       - name: Terraform Validate
-        working-directory: Terraform
-        run: terraform validate
+        run: terraform validate 
 
       - name: Terraform Plan
-        working-directory: Terraform
-        run: terraform plan -out=main.tfplan
+        # -lock=false is okay for now since we're clearing that stuck lock, 
+        # but once you "Break Lease" in Azure, you should remove it for safety!
+        run: terraform plan -input=false -var-file="variables.tfvars" -out=tfplan -lock=false
 
       - name: Terraform Apply
-        working-directory: Terraform
-        # Only apply on push to specific branches
-        if: github.event_name == 'push' && contains(fromJson('["main", "dev", "uat"]'), github.ref_name)
-        # Removed -auto-approve (not used with plan files)
-        run: terraform apply main.tfplan
+        if: github.event_name == 'push'
+        run: terraform apply -input=false "tfplan"

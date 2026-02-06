@@ -29,10 +29,20 @@ jobs:
         with:
           terraform_version: 1.6.6
 
+      - name: Set Environment
+        run: |
+          if [[ "${{ github.ref_name }}" == "main" ]]; then
+            echo "ENV=prod" >> $GITHUB_ENV
+          elif [[ "${{ github.ref_name }}" == "uat" ]]; then
+            echo "ENV=uat" >> $GITHUB_ENV
+          else
+            echo "ENV=dev" >> $GITHUB_ENV
+          fi
+
       - name: Terraform Init
         run: |
           terraform init -reconfigure \
-            -backend-config="../backend-config/uat.hcl"
+            -backend-config="../backend-config/${{ env.ENV }}.hcl"
 
       - name: Terraform Validate
         run: terraform validate 
@@ -40,7 +50,11 @@ jobs:
       - name: Terraform Plan
         # -lock=false is okay for now since we're clearing that stuck lock, 
         # but once you "Break Lease" in Azure, you should remove it for safety!
-        run: terraform plan -input=false -var-file="variables.tfvars" -out=tfplan -lock=false
+        # run: terraform plan -input=false -var-file="variables.tfvars" -out=tfplan -lock=false
+        run: |
+          terraform plan -input=false \
+            -var-file="../environments/${{ env.ENV }}.tfvars" \
+            -out=tfplan
 
       - name: Terraform Apply
         if: github.event_name == 'push'

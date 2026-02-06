@@ -1,2 +1,2 @@
-prefix   = "ekyc"
+prefix   = "ekyc-uat"
 location = "southeastasia"

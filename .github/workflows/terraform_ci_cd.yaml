@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./Terraform
+        working-directory: terraform
 
     env:
       ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
@@ -39,7 +39,7 @@ jobs:
 
       - name: Terraform Init
         working-directory: ${{ env.WORKING_DIR }} 
-        run: terraform init -backend-config="terraform-backend/terraform.hcl"
+        run: terraform init -backend-config="terraform-backend/terraform-state.hcl"
 
       - name: Terraform Validate
         working-directory: ${{ env.WORKING_DIR }}

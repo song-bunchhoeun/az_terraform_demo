@@ -46,7 +46,7 @@ jobs:
         run: terraform validate 
 
       - name: Terraform Plan
-        run: terraform plan -input=false -var-file="Terraform/variables.tfvars"
+        run: terraform plan -input=false -var-file="variables.tfvars"
 
       - name: Terraform Apply
         if: github.event_name == 'push' && (github.ref_name == 'dev' || github.ref_name == 'uat' || github.ref_name == 'main' || github.ref_name == 'terraform_azure')

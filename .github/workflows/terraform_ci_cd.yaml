@@ -45,15 +45,15 @@ jobs:
               ;;
           esac
 
-          # ✅ Point TF_DIR to the folder with your .tf files
+          # THIS IS THE KEY:
           echo "TF_DIR=terraform_env/$TF_ENV" >> $GITHUB_ENV
+
 
 
       # Terraform Init
       - name: Terraform Init
         working-directory: ./${{ env.TF_DIR }}
         run: terraform init -reconfigure -backend-config=../../backend-config/${{ env.TF_ENV }}.hcl
-
 
       - name: Terraform Plan
         working-directory: ./${{ env.TF_DIR }}
@@ -63,4 +63,5 @@ jobs:
         if: github.event_name == 'push'
         working-directory: ./${{ env.TF_DIR }}
         run: terraform apply -input=false tfplan
+
 

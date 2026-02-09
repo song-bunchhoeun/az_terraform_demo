@@ -39,21 +39,21 @@ jobs:
 
       # Terraform Init
       - name: Terraform Init
-        working-directory: ./environments/${{ env.ENV }}
+        working-directory: ./terraform_env/${{ env.ENV }}
         run: |
           terraform init -reconfigure \
             -backend-config=../../backend-config/${{ env.ENV }}.hcl
 
       - name: Terraform Validate
-        working-directory: ./environments/${{ env.ENV }}
+        working-directory: ./terraform_env/${{ env.ENV }}
         run: terraform validate
 
       - name: Terraform Plan
-        working-directory: ./environments/${{ env.ENV }}
+        working-directory: ./terraform_env/${{ env.ENV }}
         run: |
           terraform plan -input=false -out=tfplan
 
       - name: Terraform Apply
         if: github.event_name == 'push'
-        working-directory: ./environments/${{ env.ENV }}
+        working-directory: ./terraform_env/${{ env.ENV }}
         run: terraform apply -input=false tfplan

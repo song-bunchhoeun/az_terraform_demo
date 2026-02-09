@@ -27,35 +27,46 @@ jobs:
           terraform_version: 1.6.6
 
       # Determine environment based on branch
-      - name: Set Environment
+      - name : Terraform env
         run: |
-          if [[ "${{ github.ref_name }}" == "main" ]]; then
-            echo "ENV=prod" >> $GITHUB_ENV
-          elif [[ "${{ github.ref_name }}" == "uat" ]]; then
-            echo "ENV=uat" >> $GITHUB_ENV
-          else
-            echo "ENV=dev" >> $GITHUB_ENV
-          fi
+          case "${{ github.ref_name }}" in
+            main)
+              echo "TF_ENV=prod" >> $GITHUB_ENV
+              ;;
+            uat)
+              echo "TF_ENV=uat" >> $GITHUB_ENV
+              ;;
+            dev)
+              echo "TF_ENV=dev" >> $GITHUB_ENV
+              ;;
+            *)
+              echo "Unsupported branch: ${{ github.ref_name }}"
+              exit 1
+              ;;
+          esac
+
+          echo "TF_DIR=terraform_env/$TF_ENV" >> $GITHUB_ENV
 
       # Terraform Init
       - name: Terraform Init
-        working-directory: ./terraform_env/${{ env.ENV }}
+        working-directory: ./${{ env.TF_DIR }}
         run: |
           terraform init -reconfigure \
-            -backend-config=../../backend-config/${{ env.ENV }}.hcl
+            -backend-config=../../backend-config/${{ env.TF_ENV }}.hcl
 
       - name: Terraform Validate
-        working-directory: ./terraform_env/${{ env.ENV }}
+        working-directory: ./${{ env.TF_DIR }}
         run: terraform validate
 
       - name: Terraform Plan
-        working-directory: ./terraform_env/${{ env.ENV }}
+        working-directory: ./${{ env.TF_DIR }}
         run: |
             terraform plan -input=false \
-            -var-file="../terraform_env/${{ env.ENV }}.tfvars" \
+            -var-file="../terraform_env/${{ env.TF_ENV}}.tfvars" \
             -out=tfplan
 
       - name: Terraform Apply
         if: github.event_name == 'push'
-        working-directory: ./terraform_env/${{ env.ENV }}
-        run: terraform apply -input=false "tfplan"
+        working-directory: ./${{ env.TF_DIR }}
+        run: terraform apply -input=false tfplan
+

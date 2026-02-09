@@ -27,7 +27,7 @@ jobs:
           terraform_version: 1.6.6
 
       # Determine environment based on branch
-      - name : Terraform env
+      - name: Resolve Terraform Environment
         run: |
           case "${{ github.ref_name }}" in
             main)
@@ -45,19 +45,19 @@ jobs:
               ;;
           esac
 
+          # ✅ Point TF_DIR to the folder with your .tf files
           echo "TF_DIR=terraform_env/$TF_ENV" >> $GITHUB_ENV
+
 
       # Terraform Init
       - name: Terraform Init
         working-directory: ./${{ env.TF_DIR }}
-        run: |
-          terraform init -reconfigure \
-            -backend-config=../../backend-config/${{ env.TF_ENV }}.hcl
+        run: terraform init -reconfigure \
+              -backend-config=../../backend-config/${{ env.TF_ENV }}.hcl
 
       - name: Terraform Plan
         working-directory: ./${{ env.TF_DIR }}
         run: terraform plan -input=false -out=tfplan
-
 
       - name: Terraform Apply
         if: github.event_name == 'push'

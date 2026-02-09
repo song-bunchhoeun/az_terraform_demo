@@ -68,7 +68,7 @@ resource "azurerm_network_security_group" "nsg_routing_dev" {
 }
 # Routing (UAT)
 resource "azurerm_network_security_group" "nsg_routing_uat" {
-  name                = "${var.prefix}-rt-uat-sea-001"
+  name                = "${var.prefix}-rt-sea-001"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 }

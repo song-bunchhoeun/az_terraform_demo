@@ -60,10 +60,7 @@ jobs:
 
       - name: Terraform Plan
         working-directory: ./${{ env.TF_DIR }}
-        run: |
-            terraform plan -input=false \
-            -var-file="../terraform_env/${{ env.TF_ENV}}.tfvars" \
-            -out=tfplan
+        run: terraform plan -input=false -out=tfplan
 
       - name: Terraform Apply
         if: github.event_name == 'push'

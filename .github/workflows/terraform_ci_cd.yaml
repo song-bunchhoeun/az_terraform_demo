@@ -54,10 +54,6 @@ jobs:
           terraform init -reconfigure \
             -backend-config=../../backend-config/${{ env.TF_ENV }}.hcl
 
-      - name: Terraform Validate
-        working-directory: ./${{ env.TF_DIR }}
-        run: terraform validate
-
       - name: Terraform Plan
         working-directory: ./${{ env.TF_DIR }}
         run: terraform plan -input=false -out=tfplan

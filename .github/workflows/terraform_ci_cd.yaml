@@ -51,7 +51,7 @@ jobs:
       - name: Terraform Plan
         working-directory: ./terraform_env/${{ env.ENV }}
         run: |
-          terraform plan -input=false -out=tfplan
+          terraform plan -out=tfplan
 
       - name: Terraform Apply
         if: github.event_name == 'push'

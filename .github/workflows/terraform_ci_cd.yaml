@@ -29,24 +29,21 @@ jobs:
       # Determine environment based on branch
       - name: Resolve Terraform Environment
         run: |
-          case "${{ github.ref_name }}" in
-            main)
-              echo "TF_ENV=prod" >> $GITHUB_ENV
-              ;;
-            uat)
-              echo "TF_ENV=uat" >> $GITHUB_ENV
-              ;;
-            dev)
-              echo "TF_ENV=dev" >> $GITHUB_ENV
-              ;;
-            *)
-              echo "Unsupported branch: ${{ github.ref_name }}"
-              exit 1
-              ;;
-          esac
+          # 1. Determine the environment name
+          if [[ "${{ github.ref_name }}" == "main" ]]; then
+            ENV="prod"
+          elif [[ "${{ github.ref_name }}" == "uat" ]]; then
+            ENV="uat"
+          elif [[ "${{ github.ref_name }}" == "dev" ]]; then
+            ENV="dev"
+          else
+            echo "Unsupported branch: ${{ github.ref_name }}"
+            exit 1
+          fi
 
-          # THIS IS THE KEY:
-          echo "TF_DIR=terraform_env/$TF_ENV" >> $GITHUB_ENV
+          # 2. Export both to GITHUB_ENV so later steps can see them
+          echo "TF_ENV=$ENV" >> $GITHUB_ENV
+          echo "TF_DIR=terraform_env/$ENV" >> $GITHUB_ENV
 
 
 

@@ -10,9 +10,6 @@ on:
 jobs:
   terraform-build-deploy:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./Terraform
 
     env:
       ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
@@ -29,6 +26,7 @@ jobs:
         with:
           terraform_version: 1.6.6
 
+      # Determine environment based on branch
       - name: Set Environment
         run: |
           if [[ "${{ github.ref_name }}" == "main" ]]; then
@@ -39,23 +37,23 @@ jobs:
             echo "ENV=dev" >> $GITHUB_ENV
           fi
 
+      # Terraform Init
       - name: Terraform Init
+        working-directory: ./environments/${{ env.ENV }}
         run: |
           terraform init -reconfigure \
-            -backend-config="../backend-config/${{ env.ENV }}.hcl"
+            -backend-config=../../backend-config/${{ env.ENV }}.hcl
 
       - name: Terraform Validate
-        run: terraform validate 
+        working-directory: ./environments/${{ env.ENV }}
+        run: terraform validate
 
       - name: Terraform Plan
-        # -lock=false is okay for now since we're clearing that stuck lock, 
-        # but once you "Break Lease" in Azure, you should remove it for safety!
-        # run: terraform plan -input=false -var-file="variables.tfvars" -out=tfplan -lock=false
+        working-directory: ./environments/${{ env.ENV }}
         run: |
-          terraform plan -input=false \
-            -var-file="../environments/${{ env.ENV }}.tfvars" \
-            -out=tfplan
+          terraform plan -input=false -out=tfplan
 
       - name: Terraform Apply
         if: github.event_name == 'push'
-        run: terraform apply -input=false "tfplan"
+        working-directory: ./environments/${{ env.ENV }}
+        run: terraform apply -input=false tfplan

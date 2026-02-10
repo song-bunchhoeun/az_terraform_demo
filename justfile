@@ -10,4 +10,4 @@ set shell := ["bash", "-c"]
         echo "Using default message: $msg"; \
     fi; \
     git commit -m "$msg"; \
-    git push
+    git push -u origin feat/iac_terraform

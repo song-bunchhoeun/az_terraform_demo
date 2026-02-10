@@ -1,0 +1,39 @@
+# Set shell to bash for better error handling
+set shell := ["bash", "-c"]
+
+# Variables
+ENV := "uat"
+BACKEND_CONFIG := "../../backend_config/uat.hcl"
+
+# Initialize terraform with the remote backend configuration
+init:
+    @echo "Initializing {{ENV}} environment..."
+    terraform init -backend-config={{BACKEND_CONFIG}}
+
+# Format and validate code
+fmt:
+    terraform fmt -recursive ../../
+    terraform validate
+
+# Plan the infrastructure changes
+plan: fmt
+    @echo "Generating plan for {{ENV}}..."
+    terraform plan -out={{ENV}}.tfplan
+
+# Apply the changes
+apply:
+    @echo "Applying changes for {{ENV}}..."
+    terraform apply {{ENV}}.tfplan
+    rm {{ENV}}.tfplan
+
+# Destroy the infrastructure (use with caution!)
+destroy:
+    @echo "DANGER: Destroying {{ENV}} environment..."
+    terraform destroy -auto-approve
+
+# Clean local terraform files
+clean:
+    rm -rf .terraform
+    rm -f .terraform.lock.hcl
+    rm -f *.tfplan
+

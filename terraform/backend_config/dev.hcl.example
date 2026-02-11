@@ -1,0 +1,4 @@
+resource_group_name  = "rg-global-terraform"
+storage_account_name = "stterraformstate"
+container_name       = "statefile"
+key                  = "ekyc.dev.tfstate"

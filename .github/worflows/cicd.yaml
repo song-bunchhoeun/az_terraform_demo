@@ -1,0 +1,56 @@
+name: Terraform CI/CD
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, dev, uat ]
+  pull_request:
+    branches: [ main, dev, uat ]
+
+jobs:
+  terraform-build-deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.6
+
+      - name: Terraform Environments
+        run: |
+          if [[ "${{ github.ref_name }}" == "main" ]]; then
+            ENV="prod"
+          elif [[ "${{ github.ref_name }}" == "uat" ]]; then
+            ENV="uat"
+          elif [[ "${{ github.ref_name }}" == "dev" ]]; then
+            ENV="dev"
+          else
+            echo "Unsupported branch: ${{ github.ref_name }}"
+            exit 1
+          fi
+          echo "TF_ENV=$ENV" >> $GITHUB_ENV
+          echo "TF_DIR=terraform/envs/$ENV" >> $GITHUB_ENV
+
+      - name: Terraform Init
+        working-directory: ./${{ env.TF_DIR }}
+        run: make init
+
+      - name: Terraform Plan
+        working-directory: ./${{ env.TF_DIR }}
+        run: make plan 
+
+      - name: Terraform Apply
+        if: github.event_name == 'push'
+        working-directory: ./${{ env.TF_DIR }}
+        run: make apply
+

@@ -21,7 +21,7 @@ locals {
 module "resource_group" {
   source = "../../modules/resource-group"
 
-  name     = "rg-${local.prefix}-${local.environment}-sea-002"
+  name     = "rg-${local.prefix}-${local.environment}-sea-003"
   location = local.location
   tags     = local.common_tags
 }
@@ -87,7 +87,7 @@ resource "azurerm_storage_account" "function" {
 module "database" {
   source = "../../modules/database"
 
-  server_name         = "sql-${local.prefix}-${local.env_short}-sea-002"
+  server_name         = "sql-${local.prefix}-${local.env_short}-sea-003"
   resource_group_name = module.resource_group.name
   location            = module.resource_group.location
   server_version      = "12.0"
@@ -155,12 +155,12 @@ module "compute" {
   
   app_service_plans = {
     portal = {
-      name     = "plan-${local.prefix}-${local.environment}-sea-002"
+      name     = "plan-${local.prefix}-${local.environment}-sea-003"
       os_type  = "Windows"
       sku_name = "B1"
     }
     api = {
-      name     = "plan-${local.prefix}-${local.environment}-sea-002"
+      name     = "plan-${local.prefix}-${local.environment}-sea-003"
       os_type  = "Linux"
       sku_name = "B1"
     }
@@ -173,7 +173,7 @@ module "compute" {
   
   linux_web_apps = {
     api_dev = {
-      name             = "app-${local.prefix}-api-${local.env_short}-sea-002"
+      name             = "app-${local.prefix}-api-${local.env_short}-sea-003"
       service_plan_key = "api"
       dotnet_version   = "8.0"
       always_on        = false
@@ -185,7 +185,7 @@ module "compute" {
   
   windows_web_apps = {
     portal_dev = {
-      name             = "app-${local.prefix}-portal-${local.env_short}-sea-002"
+      name             = "app-${local.prefix}-portal-${local.env_short}-sea-003"
       service_plan_key = "portal"
       dotnet_version   = "v4.0"
       always_on        = false
@@ -197,7 +197,7 @@ module "compute" {
   
   function_apps = {
     main = {
-      name                       = "func-${local.prefix}-${local.env_short}-sea-002"
+      name                       = "func-${local.prefix}-${local.env_short}-sea-003"
       service_plan_key           = "function"
       storage_account_name       = azurerm_storage_account.function.name
       storage_account_access_key = azurerm_storage_account.function.primary_access_key
@@ -228,7 +228,7 @@ module "compute" {
 # ============================================================================
 
 resource "azurerm_api_management" "main" {
-  name                = "apim-${local.prefix}-${local.environment}-sea-002"
+  name                = "apim-${local.prefix}-${local.environment}-sea-003"
   location            = module.resource_group.location
   resource_group_name = module.resource_group.name
   publisher_name      = var.apim_publisher_name
@@ -251,12 +251,12 @@ resource "azurerm_api_management_api" "ekyc_dev" {
 }
 
 resource "azurerm_api_management_backend" "api_dev" {
-  name                = "WebApp_app-${local.prefix}-api-${local.env_short}-sea-002"
+  name                = "WebApp_app-${local.prefix}-api-${local.env_short}-sea-003"
   resource_group_name = module.resource_group.name
   api_management_name = azurerm_api_management.main.name
   protocol            = "http"
   url                 = "https://${module.compute.linux_web_app_hostnames["api_dev"]}"
-  description         = "app-${local.prefix}-api-${local.env_short}-sea-002"
+  description         = "app-${local.prefix}-api-${local.env_short}-sea-003"
   resource_id         = "https://management.azure.com${module.compute.linux_web_app_ids["api_dev"]}"
 }
 

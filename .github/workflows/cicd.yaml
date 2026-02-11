@@ -39,7 +39,7 @@ jobs:
             exit 1
           fi
           echo "TF_ENV=$ENV" >> $GITHUB_ENV
-          echo "TF_DIR=terraform/envs/$ENV" >> $GITHUB_ENV
+          echo "TF_DIR=terraform/environments/$ENV" >> $GITHUB_ENV
 
       - name: Terraform Init
         working-directory: ./${{ env.TF_DIR }}
